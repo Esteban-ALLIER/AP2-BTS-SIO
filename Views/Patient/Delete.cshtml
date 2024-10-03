@@ -1,21 +1,24 @@
-﻿
-@model Patient
+﻿@model Patient
 
-<h1>Etes vous sure de vouloir supprimer ce patient </h1>
-    <form asp-action="DeleteConfirmed" method="post">
-        <input asp-for="PatientId" type="hidden" />
-        <div class="form-group">
-            <label asp-for="Nom_p"></label> <input asp-for="Nom_p" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="Prenom_p"></label> <input asp-for="Prenom_p" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="Sexe_p"></label> <input asp-for="Sexe_p" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="Num_secu"></label> <input asp-for="Num_secu" class="form-control" />
-        </div>
-        <input type="submit" value="Delete, Yes!" class="btn btn-danger" />
-        <input type="button" onclick="history.back()" value="Naaah, don't" class="btn btn-secondary" />
-    </form>
+<h1>Êtes-vous sûr de vouloir supprimer ce patient ?</h1>
+<form asp-action="DeleteConfirmed" method="post">
+    <input asp-for="PatientId" type="hidden" />
+    <div class="form-group">
+        <label asp-for="Nom_p"></label>
+        <input asp-for="Nom_p" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label asp-for="Prenom_p"></label>
+        <input asp-for="Prenom_p" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label asp-for="Sexe_p"></label>
+        <input asp-for="Sexe_p" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label asp-for="Num_secu"></label>
+        <input asp-for="Num_secu" class="form-control" readonly />
+    </div>
+    <input type="submit" value="Delete, Yes!" class="btn btn-danger" />
+    <input type="button" onclick="history.back()" value="Naaah, don't" class="btn btn-secondary" />
+</form>

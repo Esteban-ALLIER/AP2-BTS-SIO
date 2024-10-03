@@ -35,8 +35,8 @@
                     <td>@Html.DisplayFor(m => Patient.Num_secu)</td>
                     <TD>@Html.ActionLink("Modifier", "Edit", new { id = @Patient.PatientId })</TD>
                     <TD>@Html.ActionLink("Ajouter", "Add", new { id = @Patient.PatientId })</TD>
-                    <TD><a asp-action="Delete" asp-route-id="@Patient.PatientId"> Supprimer</a> </TD>
-                    <TD>@Html.ActionLink("Détails", "Details", new { id = @Patient.PatientId })</TD>
+                    <td><a asp-action="Delete" asp-route-id="@Patient.PatientId" class="btn btn-danger btn-sm">Supprimer</a></td>                    
+                    <td><a asp-action="Details" asp-route-id="@Patient.PatientId" class="btn btn-info btn-sm">Détails</a></td>
                     <TD>@Html.ActionLink("Ordonnance", "", new { id = @Patient.PatientId })</TD>
 
 
@@ -50,7 +50,7 @@ else
     <p>Il n'y a pas de patient</p>
 }
 
-    <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary">Retour</a>
+<a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary">Retour</a>
 
 
 <style>

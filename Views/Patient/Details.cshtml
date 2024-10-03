@@ -1,27 +1,28 @@
 ﻿@model PatientEditViewModel
+
 <div class="container">
     <h2 class="centered-element text-center mt-5">Détails Patient</h2>
 </div>
 
-<form asp-action="Edit">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="Patient.PatientId" />
+<form>
+    <div class="form-group">
+        <label asp-for="Patient.Nom_p" class="control-label"></label>
+        <input asp-for="Patient.Nom_p" class="form-control" readonly/>
+    </div>
 
     <div class="form-group">
-        <label asp-for="Patient.Nom_p" class="control-label" aria-readonly="true"></label>
-        <input asp-for="Patient.Nom_p" class="form-control" aria-readonly="true"/>
+        <label asp-for="Patient.Prenom_p" class="control-label"></label>
+        <input asp-for="Patient.Prenom_p" class="form-control" readonly/>
     </div>
+
     <div class="form-group">
-        <label asp-for="Patient.Prenom_p" class="control-label"aria-readonly="true"></label>
-        <input asp-for="Patient.Prenom_p" class="form-control" aria-readonly="true"/>
+        <label asp-for="Patient.Sexe_p" class="control-label"></label>
+        <input asp-for="Patient.Sexe_p" class="form-control" readonly/>
     </div>
+
     <div class="form-group">
-        <label asp-for="Patient.Sexe_p" class="control-label"aria-readonly="true"></label>
-        <input asp-for="Patient.Sexe_p" class="form-control"aria-readonly="true" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Patient.Num_secu" class="control-label"aria-readonly="true"></label>
-        <input asp-for="Patient.Num_secu" class="form-control" aria-readonly="true"/>
+        <label asp-for="Patient.Num_secu" class="control-label"></label>
+        <input asp-for="Patient.Num_secu" class="form-control" readonly/>
     </div>
 
     <h3 class="container text-center mt-5">Antécédents</h3>
@@ -32,8 +33,8 @@
             @foreach (var antecedent in Model.Antecedents)
             {
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="SelectedAntecedentIds" value="@antecedent.AntecedentId"
-                    @(Model.SelectedAntecedentIds != null && Model.SelectedAntecedentIds.Contains(antecedent.AntecedentId) ? "checked" : "") />
+                    <input class="form-check-input" type="checkbox" value="@antecedent.AntecedentId"
+                    @(Model.SelectedAntecedentIds.Contains(antecedent.AntecedentId) ? "checked" : "") disabled />
                     <label class="form-check-label">@antecedent.Libelle_a</label>
                 </div>
             }
@@ -52,8 +53,8 @@
             @foreach (var allergie in Model.Allergies)
             {
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="SelectedAllergieIds" value="@allergie.AllergieId"
-                    @(Model.SelectedAllergieIds != null && Model.SelectedAllergieIds.Contains(allergie.AllergieId) ? "checked" : "") />
+                    <input class="form-check-input" type="checkbox" value="@allergie.AllergieId"
+                    @(Model.SelectedAllergieIds.Contains(allergie.AllergieId) ? "checked" : "") disabled />
                     <label class="form-check-label">@allergie.Libelle_al</label>
                 </div>
             }
@@ -65,7 +66,6 @@
     </div>
 
     <div class="form-group">
-        <input type="submit" value="Enregistrer" class="btn btn-primary" />
         <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>
     </div>
 </form>

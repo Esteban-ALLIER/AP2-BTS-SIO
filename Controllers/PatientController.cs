@@ -146,28 +146,52 @@ namespace ASPBookProject.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            Patient? pati = _context.Patients.FirstOrDefault<Patient>(ins => ins.PatientId == id);
-            if (pati != null) 
+            var patient = _context.Patients.FirstOrDefault(p => p.PatientId == id);
+            if (patient == null)
             {
-                return View(Delete);
+                return NotFound();
             }
-            return NotFound();
+            return View(patient); // Tu dois passer le patient à la vue Delete
         }
-
         [HttpPost]
-        public IActionResult DeleteConfirmed(int PatientId)
-
+        public IActionResult DeleteConfirmed(int patientId)
         {
-            Patient? pati = _context.Patients.FirstOrDefault<Patient>(ins => ins.PatientId == PatientId);
-            if (pati != null) 
+            var patient = _context.Patients.FirstOrDefault(p => p.PatientId == patientId);
+            if (patient == null)
             {
-                _context.Patients.Remove(pati); 
-                _context.SaveChanges(); 
-                return RedirectToAction("Index");
+                return NotFound();
             }
-            return NotFound();
+
+            _context.Patients.Remove(patient);
+            _context.SaveChanges();
+            return RedirectToAction("Index"); // Après suppression, redirige vers la liste des patients
         }
+        public async Task<IActionResult> Details(int id)
+        {
+            // Récupère le patient en fonction de son ID, ainsi que ses antécédents et allergies
+            var patient = await _context.Patients
+                .Include(p => p.Antecedents)
+                .Include(p => p.Allergies)
+                .FirstOrDefaultAsync(p => p.PatientId == id);
 
+            // Si le patient n'est pas trouvé, retourne une erreur 404
+            if (patient == null)
+            {
+                return NotFound();
+            }
 
+            // Création du modèle de vue avec les informations du patient et ses relations
+            var viewModel = new PatientEditViewModel
+            {
+                Patient = patient,
+                Antecedents = await _context.Antecedents.ToListAsync(),
+                Allergies = await _context.Allergies.ToListAsync(),
+                SelectedAntecedentIds = patient.Antecedents.Select(a => a.AntecedentId).ToList(),
+                SelectedAllergieIds = patient.Allergies.Select(a => a.AllergieId).ToList()
+            };
+
+            // Retourne la vue de détails (lecture seule)
+            return View(viewModel);
+        }
     }
 }
