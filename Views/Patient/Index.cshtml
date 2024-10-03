@@ -1,5 +1,44 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@model IEnumerable<Patient>
+<div class="container">
+    <h1 class="centered-element">Liste Patient</h1>
+</div>
+@if (Model.Count() > 0)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nom de famille</th>
+                <th>Prénom</th>
+                <th>Sexe_p</th>
+                <th>Num_secu</th>
+                <th>Details</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Patient in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(m => Patient.Nom_p)</td>
+                    <td>@Html.DisplayFor(m => Patient.Prenom_p)</td>
+                    <td>@Html.DisplayFor(m => Patient.Sexe_p)</td>
+                    <td>@Html.DisplayFor(m => Patient.Num_secu)</td>
+                    <TD>@Html.ActionLink("Details", "Edit", new { id = @Patient.PatientId })</TD>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
+else
+{
+    <p>Il n'y a pas de patient</p>
+}
+
+
+<style>
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
