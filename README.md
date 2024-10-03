@@ -706,4 +706,409 @@ Au lieu de copier le code ci-dessus au debut de chaque vue, nous pouvons utilise
 - Pour chaque vue vous devez choisir un titre unique pour la page et le placer dans la propriété ViewBag.Title
 - Si vous aviez du css et/ou du Js dans la vue, vous pouvez les placer dans le layout.
 
+#### Ajouter des liens vers différentes actions et contrôleurs
+
+Nous allons utiliser des tag helpers pour ajouter des liens vers différentes actions et contrôleurs. Nous allons également ajouter une barre de navigation à notre layout. Il faut s'assurer de preciser le controleur pour chaque action.
+
+```html
+<a asp-action="Index" asp-controller="Home">Home</a>
+```
+
+### La page d'exception pour les developpeurs
+
+Pendant les phases de développement, il est important de voir les exceptions qui se produisent. Pour cela, nous allons ajouter une page d'exception pour les développeurs. Nous devrons ajouter un middleware pour gérer les exceptions.
+
+```csharp
+app.UseDeveloperExceptionPage();
+```
+
+Vous ne devez l'utiliser que pendant les phases de développement. Pour les phases de production, vous devez utiliser un middleware qui gère les exceptions de manière plus sécurisée. En effet, ce genre de pages peut donner des informations sensibles sur votre application : telles que du code source, des informations de connexion à la base de données, etc.
+
+Au sein de votre Programme.cs, vous pouvez ajouter un middleware pour gérer les exceptions de manière plus sécurisée.
+
+```csharp
+// apres l'instruction
+var app = builder.Build();
+
+// ajouter
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    // autre middleware pour les exceptions
+}
+```
+
+Pour tester cette page vous devez vous assurer que la variable d'environnement ASPNETCORE_ENVIRONMENT est définie sur Development. Au sein l'action Index de votre contrôleur Home, vous pouvez ajouter une exception pour tester la page d'exception.
+
+```csharp
+throw new Exception("Une exception s'est produite, nous testons la page d'exception pour les développeurs.");
+```
+
+Notez que pour les erreurs 404 nous n'aurons pas de page d'exception. Nous verrons comment gérer les erreurs 404 dans la section suivante.
+
+### Gestion des erreurs de facon personnalisée
+
+Maintenant nous allons configurer pour que l'utilisateur final voit une page d'erreur personnalisée. En production nous souahitons que l'utilisateur voit une page d'erreur personnalisée plutot que la page d'exception pour les développeurs. Ajoutez les middleware suivants dans votre fichier Program.cs.
+
+```csharp
+app.UseExceptionHandler("/Error/Index");
+app.UseStatusCodePagesWithRedirects("/Error/Index"); // Pour les erreurs 404
+```
+
+Notre program.cs ressemblera à ceci :
+
+```csharp
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Error/Index");
+    app.UseStatusCodePagesWithRedirects("/Error/Index");
+}
+```
+
+Vous devez maintenant creer un controleur ErrorController avec une action Index. Cette action affichera la page d'erreur personnalisée.
+
+```csharp
+public class ErrorController : Controller
+{
+    public IActionResult Index()
+    {
+        return View();
+    }
+}
+```
+
+N'oubliez pas de creer la vue Index pour l'action Index du controleur Error. Elle pourra aussi utiiiser le layout.
+
+### Identification, Authentification et Autorisation
+
+- Identification : Qui êtes-vous ?
+  - On peut utiliser un nom d'utilisqateur, une adresse mail, un numero d'employe, de matricule, de securite sociale, etc.
+- Authentification : Pouvez-vous prouver qui vous êtes ?
+  - On peut utiliser un mot de passe, un code pin, une empreinte digitale, un code de verification, etc.
+  - On peut aussi utiliser des certificats, des cartes à puce, des clés USB, etc.
+- Autorisation : Qu'êtes-vous autorisé à faire ?
+  - On peut etre autorisé à lire, à écrire, à supprimer, à modifier, à créer, etc.
+
+#### Introduction à ASP .NET Core Identity
+
+Nous allons utiliser ASP.NET Core Identity pour gérer l'authentification et l'autorisation. ASP.NET Core Identity est un framework qui permet de gérer les utilisateurs, les rôles, les claims, les jetons, les mots de passe, etc. Il est très flexible et peut être personnalisé pour répondre à vos besoins. Il fournit des fonctions pretes a l'emploi pour l'authentification et l'autorisation. Pour cela nous allons :
+
+- Installer les packages nécessaires
+- Mettre a jour la classe de contexte de la base de données pour fonctionner avec Identity
+- Configurer et enregistrer Identity dans le conteneur de services
+- Configurer les middlewares d'autentification et d'autorisation
+- Implementez les differentes actions pour l'authentification et l'autorisation:
+  - Enregistrer de nouveaux utilisateurs
+  - Se connecter
+  - Se deconnecter
+- Nous allons ensuite restrindre l'accès à certaines pages de notre application
+
+##### Installer les packages nécessaires
+
+Installez les paquets suivants :
+
+- Microsoft.AspNetCore.Identity.EntityFrameworkCore
+- Microsoft.AspNetCore.Identity.UI
+
+##### Definition de la classe ApplicationUser (derivee de IdentityUser)
+
+Dans cette etape nous decidons de gerer nos utilisateurs avec la classe IdentityUser fournie par ASP.NET Core Identity. Nous allons creer une classe ApplicationUser qui derive de IdentityUser ou utiliser une classe existante. Les proprietes de la classe ApplicationUser seront stockées dans la table AspNetUsers de la base de données. Elles incluent entre autres :
+
+```csharp
+public virtual string UserName { get; set; }
+public virtual string NormalizedUserName { get; set; }
+public virtual string Email { get; set; }
+public virtual string NormalizedEmail { get; set; }
+public virtual bool EmailConfirmed { get; set; }
+public virtual string PasswordHash { get; set; }
+public virtual string SecurityStamp { get; set; }
+public virtual string ConcurrencyStamp { get; set; }
+public virtual string PhoneNumber { get; set; }
+public virtual bool PhoneNumberConfirmed { get; set; }
+public virtual bool TwoFactorEnabled { get; set; }
+public virtual DateTimeOffset? LockoutEnd { get; set; }
+public virtual bool LockoutEnabled { get; set; }
+public virtual int AccessFailedCount { get; set; }
+```
+
+Si nous decidons d'utiliser une classe existante, il suffit que cette derniere derive de IdentityUser.
+
+##### Mise à jour de la classe de contexte de la base de données
+
+Remplacez :
+
+```csharp
+
+public class ApplicationDbContext : DbContext
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+    {
+    }
+}
+```
+
+par :
+
+```csharp
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+    {
+    }
+}
+```
+
+Notez que vous n'avez pas a creer de dbSet pour la classe ApplicationUser. IdentityDbContext<ApplicationUser> le fait pour vous.
+
+##### enregistrer Identity dans le conteneur de services
+
+Apres l'ajout du DbContext, nous devons enregistrer Identity dans le conteneur de services. Pour cela, ajoutez le code suivant dans la classe Program.cs.
+
+```csharp
+builcder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+  {
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 8;
+
+    options.User.RequireUniqueEmail = true;
+  }
+).AddEntityFrameworkStores<ApplicationDbContext>();
+```
+
+##### Configurer les middlewares d'authentification et d'autorisation
+
+Au sein du program.cs :
+
+```csharp
+
+app.UseStaticFiles();
+app.UseAuthentication();
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+```
+
+#### Creation du controleur AccountController
+
+Nous allons creer un controleur AccountController et configurer les actions Login et Logout dans une premiere etape.
+
+```csharp
+public class AccountController : Controller
+{
+    private readonly SignInManager<ApplicationUser> _signInManager; // permet de gerer la connexion et la deconnexion des utilisateurs, nous est fourni par ASP.NET Core Identity
+
+    public AccountController(SignInManager<ApplicationUser> signInManager)
+    {
+        _signInManager = signInManager; // Signin manager est injecté dans le constructeur,
+        // c'est une classe generique qui prend en parametre ApplicationUser
+    }
+
+    public IActionResult Login()
+    {
+        return View(); // Affiche la vue Login
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Login(LoginViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+        }
+
+        return View(model);
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+
+        return RedirectToAction("Index", "Home");
+    }
+}
+```
+
+Pensez a creer le LoginViewModel qui contiendra les proprietes Username, Password et RememberMe:
+
+```csharp
+public class LoginViewModel
+{
+    [Required]
+    [Required(ErrorMessage = "The Username field is required.")]
+    public string UserName { get; set; }
+
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
+
+    [Display(Name = "Remember me?")]
+    public bool RememberMe { get; set; }
+}
+```
+
+Assurez vous d'utiliser la directive @using ASPBookProject.ViewModels dans le fichier \_ViewImports.cshtml pour pouvoir utiliser le LoginViewModel dans la vue.
+
+##### Creation de la vue Login
+
+```html
+@model LoginViewModel @{ ViewData["Title"] = "Login"; }
+
+<h1>Login</h1>
+<form asp-action="Login" asp-controller="Account" method="post">
+  <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+  <div class="form-group row">
+    <label asp-for="UserName" class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-10">
+      <input asp-for="UserName" class="form-control" />
+      <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label asp-for="Password" class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-10">
+      <input asp-for="Password" class="form-control" />
+      <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-sm-10 offset-sm-2">
+      <div class="form-check <input asp-for="RememberMe" class="form-check
+      <label class="form-check label" asp-for="RememberMe">Remember me?</label>
+      <span asp-validation-for="RememberMe" class="text-danger"></span>
+    </div>
+  </div>
+  <br />
+  <input type="submit" value="Login" class="btn btn-primary" />
+</form>
+```
+
+##### Creation de l'action Login (POST)
+
+Nous allons recuperer les informations de login soumises par le formulaire (LoginViewModel).
+
+```csharp
+[HttpPost]
+public async Task<IActionResult> Login(LoginViewModel model)
+{
+    if (ModelState.IsValid)
+    {
+        var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+
+        if (result.Succeeded)
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
+        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+    }
+
+    return View(model);
+}
+```
+
+##### Creation de l'action Logout
+
+```csharp
+public async Task<IActionResult> Logout()
+{
+    await _signInManager.SignOutAsync();
+
+    return RedirectToAction("Index", "Home");
+}
+```
+
+##### Creation de la vue Logout (optionnel)
+
+```html
+<h1>Logout</h1>
+<p>You have been logged out.</p>
+```
+
+##### Afficher l'utilisateur connecté dans le layout (barre de navigation)
+
+On va utiliser le tag helper `User.Identity.Name` pour afficher le nom de l'utilisateur connecté dans la barre de navigation.
+
+```html
+@if (User.Identity.IsAuthenticated) {
+<span class="navbar-text">Hello, @User.Identity.Name!</span>
+<a asp-action="Logout" asp-controller="Account">Logout</a>
+} else {
+<a asasp-action="Login" asp-controller="Account">Login</a>
+}
+```
+
+##### Creation de comptes utilisateurs avec le UserManager
+
+Le UserManager est une classe generique qui permet de gerer les utilisateurs. Il est fourni par ASP.NET Core Identity. Il permet de creer, de mettre a jour, de supprimer, de verrouiller, de deverrouiller, de generer des tokens, de generer des mots de passe, de generer des jetons de reinitialisation de mot de passe, etc.
+
+Pour creer un utilisateur, nous devons injecter le UserManager dans le constructeur du controleur AccountController.
+
+```csharp
+private readonly UserManager<ApplicationUser> _userManager;
+
+public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+{
+    _signInManager = signInManager;
+    _userManager = userManager;
+}
+```
+
+Nous allons ajouter une action Register pour permettre aux utilisateurs de creer un compte.
+
+```csharp
+
+public IActionResult Register()
+{
+    return View();
+}
+
+[HttpPost]
+public async Task<IActionResult> Register(RegisterViewModel model)
+{
+    if (ModelState.IsValid)
+    {
+        var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
+        var result = await _userManager.CreateAsync(user, model.Password);
+
+        if (result.Succeeded)
+        {
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            return RedirectToAction("Index", "Home");
+        }
+
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+    }
+
+    return View(model);
+}
+```
+
 ## La suite: Deploiement de l'application, securité et tests
