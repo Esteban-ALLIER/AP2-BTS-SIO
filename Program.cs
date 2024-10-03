@@ -1,6 +1,7 @@
 // set up the basic features of the ASP.NET Core platform
 
 using ASPBookProject.Data;
+using ASPBookProject.Models;
 using ASPBookProject.Services.FakeDataService;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,9 +26,31 @@ var serverVersion = new MySqlServerVersion(new Version(11, 0, 2));
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), serverVersion)
 );
+builder.Services.AddDefaultIdentity<Medecin>(options =>
+  {
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 8;
 
+    options.User.RequireUniqueEmail = true;
+  }
+).AddEntityFrameworkStores<ApplicationDbContext>();
 // set up middleware components
 var app = builder.Build();
+
+// ajouter
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Error/Index");
+    app.UseStatusCodePagesWithRedirects("/Error/Index");
+}
 
 // Verification que la base de donnees est creee
 var context = app.Services.CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -59,3 +82,4 @@ app.MapControllerRoute(
 );
 
 app.Run();
+

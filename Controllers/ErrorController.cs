@@ -2,9 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ASPBookProject.Controllers
 {
-    public class LoginController : Controller
+    public class ErrorController : Controller
     {
-        // GET: LoginController
         public ActionResult Index()
         {
             return View();

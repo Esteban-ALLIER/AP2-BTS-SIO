@@ -1,7 +1,13 @@
 ﻿@model IEnumerable<Patient>
 <div class="container">
-    <h1 class="centered-element">Liste Patient</h1>
+    <h1 class="centered-element">Liste Patients</h1>
 </div>
+<div class="form-group">
+    <br><br>
+    <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary">Retour</a>
+</div>
+
+
 @if (Model.Count() > 0)
 {
     <table class="table table-striped">
@@ -9,9 +15,15 @@
             <tr>
                 <th>Nom de famille</th>
                 <th>Prénom</th>
-                <th>Sexe_p</th>
+                <th>Sexe</th>
                 <th>Num_secu</th>
-                <th>Details</th>
+                <th>Modifier</th>
+                <th>Ajouter</th>
+                <th>Supprimer</th>
+                <th>Détails</th>
+                <th>Ordonnance</th>
+
+
 
             </tr>
         </thead>
@@ -23,7 +35,13 @@
                     <td>@Html.DisplayFor(m => Patient.Prenom_p)</td>
                     <td>@Html.DisplayFor(m => Patient.Sexe_p)</td>
                     <td>@Html.DisplayFor(m => Patient.Num_secu)</td>
-                    <TD>@Html.ActionLink("Details", "Edit", new { id = @Patient.PatientId })</TD>
+                    <TD>@Html.ActionLink("Modifier", "Edit", new { id = @Patient.PatientId })</TD>
+                    <TD>@Html.ActionLink("Ajouter", "Add", new { id = @Patient.PatientId })</TD>
+                    <TD><a asp-action="Delete" asp-route-id="@Patient.PatientId"> Supprimer</a> </TD>
+                    <TD>@Html.ActionLink("Détails", "Details", new { id = @Patient.PatientId })</TD>
+                    <TD>@Html.ActionLink("Ordonnance", "", new { id = @Patient.PatientId })</TD>
+
+
                 </tr>
             }
         </tbody>
@@ -33,6 +51,7 @@ else
 {
     <p>Il n'y a pas de patient</p>
 }
+
 
 
 <style>

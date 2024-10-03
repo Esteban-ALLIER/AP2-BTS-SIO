@@ -143,6 +143,31 @@ namespace ASPBookProject.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            Patient? pati = _context.Patients.FirstOrDefault<Patient>(ins => ins.PatientId == id);
+            if (pati != null) 
+            {
+                return View(Delete);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public IActionResult DeleteConfirmed(int PatientId)
+
+        {
+            Patient? pati = _context.Patients.FirstOrDefault<Patient>(ins => ins.PatientId == PatientId);
+            if (pati != null) 
+            {
+                _context.Patients.Remove(pati); 
+                _context.SaveChanges(); 
+                return RedirectToAction("Index");
+            }
+            return NotFound();
+        }
+
 
     }
 }

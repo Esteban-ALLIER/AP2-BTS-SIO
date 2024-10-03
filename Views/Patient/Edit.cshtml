@@ -1,6 +1,6 @@
 ﻿@model PatientEditViewModel
 <div class="container">
-    <h2 class="centered-element text-center">Éditer Patient</h2>
+    <h2 class="centered-element text-center mt-5">Éditer Patient</h2>
 </div>
 
 <form asp-action="Edit">
@@ -28,7 +28,7 @@
         <span asp-validation-for="Patient.Num_secu" class="text-danger"></span>
     </div>
 
-    <h3 class="container text-center">Antécédents</h3>
+    <h3 class="container text-center mt-5">Antécédents</h3>
 
     <div class="form-group">
         @if (Model.Antecedents != null && Model.Antecedents.Any())
@@ -48,7 +48,7 @@
         }
     </div>
 
-    <h3 class="container text-center">Allergies</h3>
+    <h3 class="container text-center mt-5">Allergies</h3>
 
     <div class="form-group">
         @if (Model.Allergies != null && Model.Allergies.Any())
