@@ -8,7 +8,7 @@ public class LoginViewModel
     [Required(ErrorMessage = "The Username field is required.")]
     public string UserName { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "The Password field is required.")]
     [DataType(DataType.Password)]
     public string Password { get; set; }
 

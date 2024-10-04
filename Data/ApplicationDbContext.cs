@@ -52,6 +52,11 @@ public class ApplicationDbContext : IdentityDbContext<Medecin>
             .WithOne(p => p.Ordonnance)
             .HasForeignKey<Ordonnance>(o => o.PatientId);
 
+        modelBuilder.Entity<Ordonnance>()
+    .HasOne(o => o.Medecin)
+    .WithMany(m => m.Ordonnances)
+    .HasForeignKey(o => o.MedecinId);
+
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Student>().HasData(
             new Student()

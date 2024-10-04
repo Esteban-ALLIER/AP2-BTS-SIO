@@ -11,12 +11,11 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Nom de famille</th>
+                <th>Nom</th>
                 <th>Prénom</th>
                 <th>Sexe</th>
                 <th>Num_secu</th>
                 <th>Modifier</th>
-                <th>Ajouter</th>
                 <th>Supprimer</th>
                 <th>Détails</th>
                 <th>Ordonnance</th>
@@ -34,8 +33,7 @@
                     <td>@Html.DisplayFor(m => Patient.Sexe_p)</td>
                     <td>@Html.DisplayFor(m => Patient.Num_secu)</td>
                     <TD>@Html.ActionLink("Modifier", "Edit", new { id = @Patient.PatientId })</TD>
-                    <TD>@Html.ActionLink("Ajouter", "Add", new { id = @Patient.PatientId })</TD>
-                    <td><a asp-action="Delete" asp-route-id="@Patient.PatientId" class="btn btn-danger btn-sm">Supprimer</a></td>                    
+                    <td><a asp-action="Delete" asp-route-id="@Patient.PatientId" class="btn btn-danger btn-sm">Supprimer</a></td>
                     <td><a asp-action="Details" asp-route-id="@Patient.PatientId" class="btn btn-info btn-sm">Détails</a></td>
                     <TD>@Html.ActionLink("Ordonnance", "", new { id = @Patient.PatientId })</TD>
 
@@ -49,9 +47,9 @@ else
 {
     <p>Il n'y a pas de patient</p>
 }
-
+<br>
 <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary">Retour</a>
-
+<a asp-action="Add" class="btn btn-primary btn-sm">Ajouter</a>
 
 <style>
     .container {

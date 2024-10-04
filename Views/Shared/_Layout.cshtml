@@ -26,15 +26,7 @@
             <div class="container-fluid">
                 <a class="nav-link" asp-action="Index" asp-controller="Dashboard">
                     <img src="~/images/logo-gsb.png" width="90" height="50"></a>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <span class="navbar-text">Hello, @User.Identity.Name!</span>
-                    <a asp-action="Logout" asp-controller="Account">Logout</a>
-                }
-                else
-                {
-                    <a asasp-action="Login" asp-controller="Account">Se connecter</a>
-                }
+
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -44,13 +36,31 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     </ul>
-
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                    <img src="~/images/IconProfile.webp" width="90" height="50"></a>
+                            <!-- Image de profil avec contour circulaire -->
+                            <img src="~/images/IconProfile.png" width="50" height="50" class="rounded-circle"
+                                alt="Profile Icon" style="object-fit: cover;" />
                         </button>
                         <ul class="dropdown-menu">
+                            <li>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <span class="navbar-text">Bonjour Dr.@User.Identity.Name!</span>
+                                    <a asp-action="Logout" asp-controller="Account">
+                                        <button class="btn btn-danger btn-sm">Se déconnecter</button>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <p><span class="navbar-text">Vous êtes déconnecté.</span></p>
+                                    <a asp-action="Login" asp-controller="Account">
+                                        <button class="btn btn-info btn-sm">S'identifier</button>
+                                    </a>
+                                }
+                            </li>
+                            <br>
                             <li>
                                 <div class="form-check form-switch">
                                     <!-- Toggle Dark Mode -->
@@ -61,7 +71,6 @@
                             </li>
                         </ul>
                     </div>
-
                 </div>
             </div>
         </nav>

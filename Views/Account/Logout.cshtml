@@ -1,2 +1,13 @@
-﻿<h1>Logout</h1>
-<p>You have been logged out.</p>
+﻿@{
+    ViewData["Title"] = "Déconnexion";
+}
+
+<h1>Vous avez été déconnecté.</h1>
+<p>Vous serez redirigé vers la page d'accueil dans 5 secondes...</p>
+
+<script type="text/javascript">
+    // Redirection après 5 secondes (5000 millisecondes)
+    setTimeout(function () {
+        window.location.href = '@Url.Action("Login", "Account")'; // Redirige vers la page d'accueil
+    }, 5000);
+</script>
