@@ -48,13 +48,16 @@
                                 @if (User.Identity.IsAuthenticated)
                                 {
                                     <span class="navbar-text">Bonjour Dr.@User.Identity.Name!</span>
+                                    <br>
                                     <a asp-action="Logout" asp-controller="Account">
+                                        <br>
                                         <button class="btn btn-danger btn-sm">Se déconnecter</button>
                                     </a>
                                 }
                                 else
                                 {
-                                    <p><span class="navbar-text">Vous êtes déconnecté.</span></p>
+                                    <span class="navbar-text">Vous êtes déconnecté.</span>
+                                    <br>
                                     <a asp-action="Login" asp-controller="Account">
                                         <button class="btn btn-info btn-sm">S'identifier</button>
                                     </a>

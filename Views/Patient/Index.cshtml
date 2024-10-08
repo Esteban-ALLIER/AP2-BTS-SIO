@@ -1,9 +1,7 @@
 ﻿@model IEnumerable<Patient>
-<div class="container">
-    <h1 class="centered-element">Liste Patients</h1>
-</div>
-<div class="form-group">
-</div>
+    <br>
+<h1 class="text-center">Liste Patients</h1>
+
 
 
 @if (Model.Count() > 0)
@@ -16,12 +14,9 @@
                 <th>Sexe</th>
                 <th>Num_secu</th>
                 <th>Modifier</th>
-                <th>Supprimer</th>
                 <th>Détails</th>
                 <th>Ordonnance</th>
-
-
-
+                <th>Supprimer</th>
             </tr>
         </thead>
         <tbody>
@@ -32,12 +27,10 @@
                     <td>@Html.DisplayFor(m => Patient.Prenom_p)</td>
                     <td>@Html.DisplayFor(m => Patient.Sexe_p)</td>
                     <td>@Html.DisplayFor(m => Patient.Num_secu)</td>
-                    <TD>@Html.ActionLink("Modifier", "Edit", new { id = @Patient.PatientId })</TD>
+                    <td><a asp-action="Edit" asp-route-id="@Patient.PatientId" class="btn btn-primary btn-sm">Modifier</a></td>
+                    <td><a asp-action="Details" asp-route-id="@Patient.PatientId" class="btn btn-primary btn-sm">Détails</a></td>
+                    <td><a asp-action="Ordonnance" asp-route-id="@Patient.PatientId"class="btn btn-success btn-sm">Ordonnance</a></td>
                     <td><a asp-action="Delete" asp-route-id="@Patient.PatientId" class="btn btn-danger btn-sm">Supprimer</a></td>
-                    <td><a asp-action="Details" asp-route-id="@Patient.PatientId" class="btn btn-info btn-sm">Détails</a></td>
-                    <TD>@Html.ActionLink("Ordonnance", "", new { id = @Patient.PatientId })</TD>
-
-
                 </tr>
             }
         </tbody>
@@ -49,12 +42,4 @@ else
 }
 <br>
 <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary">Retour</a>
-<a asp-action="Add" class="btn btn-primary btn-sm">Ajouter</a>
-
-<style>
-    .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-</style>
+<a asp-action="Add" class="btn btn-primary">Ajouter</a>

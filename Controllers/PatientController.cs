@@ -1,5 +1,6 @@
 using ASPBookProject.Data;
 using ASPBookProject.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ public class PatientEditViewModel
 
 namespace ASPBookProject.Controllers
 {
+    [Authorize]
     public class PatientController : Controller
     {
         // 
@@ -26,7 +28,7 @@ namespace ASPBookProject.Controllers
         {
             _context = context;
         }
-
+        [Authorize]
         // GET: PatientController
         public ActionResult Index()
         {
@@ -59,7 +61,7 @@ namespace ASPBookProject.Controllers
 
             return View(viewModel);
         }
-
+        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, PatientEditViewModel viewModel)
@@ -142,7 +144,7 @@ namespace ASPBookProject.Controllers
             return _context.Patients.Any(e => e.PatientId == id);
         }
 
-
+        [Authorize]
         [HttpGet]
         public IActionResult Delete(int id)
         {
@@ -153,6 +155,7 @@ namespace ASPBookProject.Controllers
             }
             return View(patient); // Tu dois passer le patient à la vue Delete
         }
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult DeleteConfirmed(int patientId)
         {
@@ -192,6 +195,25 @@ namespace ASPBookProject.Controllers
 
             // Retourne la vue de détails (lecture seule)
             return View(viewModel);
+        }
+        [Authorize]
+        [HttpGet]
+        public IActionResult Add()
+        {
+            return View();
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult Add(Patient patients)
+        {
+            // verification de la validite du model avec ModelState
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            _context.Patients.Add(patients);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }

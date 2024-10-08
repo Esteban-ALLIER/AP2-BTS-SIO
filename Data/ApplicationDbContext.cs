@@ -32,30 +32,44 @@ public class ApplicationDbContext : IdentityDbContext<Medecin>
         modelBuilder.Entity<Patient>()
           .HasMany(p => p.Allergies)
           .WithMany(a => a.Patients)
-          .UsingEntity(j => j.ToTable("AllergiePatient")); ;
+          .UsingEntity(j => j.ToTable("AllergiePatient"));
+
 
         modelBuilder.Entity<Patient>()
             .HasMany(p => p.Antecedents)
             .WithMany(a => a.Patients)
-            .UsingEntity(j => j.ToTable("AntecedentPatient")); ;
+            .UsingEntity(j => j.ToTable("AntecedentPatient"));
 
-        modelBuilder.Entity<Allergie>()
-            .HasMany(a => a.Medicaments)
-            .WithMany(m => m.Allergies);
 
-        modelBuilder.Entity<Antecedent>()
-            .HasMany(a => a.Medicaments)
-            .WithMany(m => m.Antecedents);
+        modelBuilder.Entity<Medicament>()
+            .HasMany(m => m.Antecedents)
+            .WithMany(a => a.Medicaments)
+            .UsingEntity(j => j.ToTable("AntecedentMedicament")); 
+
+
+        modelBuilder.Entity<Medicament>()
+            .HasMany(m => m.Allergies)
+            .WithMany(a => a.Medicaments)
+            .UsingEntity(j => j.ToTable("AllergieMedicament")); 
+
+
+        modelBuilder.Entity<Ordonnance>()
+            .HasMany(o => o.Medicaments)
+            .WithMany(m => m.Ordonnances)
+            .UsingEntity(j => j.ToTable("MedicamentOrdonnance"));
+
 
         modelBuilder.Entity<Ordonnance>()
             .HasOne(o => o.Patient)
-            .WithOne(p => p.Ordonnance)
-            .HasForeignKey<Ordonnance>(o => o.PatientId);
+            .WithMany(p => p.Ordonnances)
+            .HasForeignKey(o => o.PatientId);
+
 
         modelBuilder.Entity<Ordonnance>()
-    .HasOne(o => o.Medecin)
-    .WithMany(m => m.Ordonnances)
-    .HasForeignKey(o => o.MedecinId);
+            .HasOne(o => o.Medecin)
+            .WithMany(m => m.Ordonnances)
+            .HasForeignKey(o => o.MedecinId);
+
 
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Student>().HasData(
