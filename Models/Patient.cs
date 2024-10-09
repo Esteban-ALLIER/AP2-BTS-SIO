@@ -16,5 +16,5 @@ public class Patient
     public required String Num_secu { get; set; }
     public List<Antecedent> Antecedents { get; set; } = new();
     public List<Allergie> Allergies { get; set; } = new();
-    public List<Ordonnance> Ordonnances { get; set; }
+    public List<Ordonnance>? Ordonnances { get; set; }
 }
