@@ -1,5 +1,6 @@
 using ASPBookProject.Data;
 using ASPBookProject.Models;
+using ASPBookProject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -198,22 +199,73 @@ namespace ASPBookProject.Controllers
         }
         [Authorize]
         [HttpGet]
-        public IActionResult Add()
+        public async Task<IActionResult> Add()
         {
-            return View();
+            var viewModel = new AddPatientViewModels
+            {
+                Nom_p = string.Empty,
+                Prenom_p = string.Empty,
+                Sexe_p = TypeSexe.Masculin,
+                Num_secu = string.Empty,
+                Antecedents = await _context.Antecedents.ToListAsync(),
+                Allergies = await _context.Allergies.ToListAsync()
+            };
+
+            return View(viewModel);
         }
+
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult Add(Patient patients)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(AddPatientViewModels viewModel)
         {
-            // verification de la validite du model avec ModelState
             if (!ModelState.IsValid)
             {
-                return View();
+                viewModel.Antecedents = await _context.Antecedents.ToListAsync();
+                viewModel.Allergies = await _context.Allergies.ToListAsync();
+                return View(viewModel);
             }
-            _context.Patients.Add(patients);
-            _context.SaveChanges();
+
+            // Crée un nouveau patient avec les informations du formulaire
+            var patient = new Patient
+            {
+                Nom_p = viewModel.Nom_p,
+                Prenom_p = viewModel.Prenom_p,
+                Sexe_p = (Sexe)viewModel.Sexe_p,
+                Num_secu = viewModel.Num_secu
+            };
+
+            // Ajout des antécédents sélectionnés
+            if (viewModel.SelectedAntecedentIds != null)
+            {
+                var selectedAntecedents = await _context.Antecedents
+                    .Where(a => viewModel.SelectedAntecedentIds.Contains(a.AntecedentId))
+                    .ToListAsync();
+
+                foreach (var antecedent in selectedAntecedents)
+                {
+                    patient.Antecedents.Add(antecedent);
+                }
+            }
+
+            // Ajout des allergies sélectionnées
+            if (viewModel.SelectedAllergieIds != null)
+            {
+                var selectedAllergies = await _context.Allergies
+                    .Where(al => viewModel.SelectedAllergieIds.Contains(al.AllergieId))
+                    .ToListAsync();
+
+                foreach (var allergie in selectedAllergies)
+                {
+                    patient.Allergies.Add(allergie);
+                }
+            }
+
+            _context.Patients.Add(patient);
+            await _context.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
+
     }
 }
