@@ -12,7 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<Medecin>
     // Elle est responsable du mapping objet-relationnel
     public DbSet<Student> Roster { get; set; }
     public DbSet<Instructor> Instructors { get; set; }
-
+    public DbSet<Medecin> Medecins { get; set; }
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Allergie> Allergies => Set<Allergie>();
     public DbSet<Ordonnance> Ordonnances => Set<Ordonnance>();

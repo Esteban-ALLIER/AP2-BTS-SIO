@@ -154,7 +154,7 @@ namespace ASPBookProject.Controllers
             {
                 return NotFound();
             }
-            return View(patient); // Tu dois passer le patient à la vue Delete
+            return View(patient); 
         }
         [AllowAnonymous]
         [HttpPost]
@@ -194,7 +194,6 @@ namespace ASPBookProject.Controllers
                 SelectedAllergieIds = patient.Allergies.Select(a => a.AllergieId).ToList()
             };
 
-            // Retourne la vue de détails (lecture seule)
             return View(viewModel);
         }
         [Authorize]

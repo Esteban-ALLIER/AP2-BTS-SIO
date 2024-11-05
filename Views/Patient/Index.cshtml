@@ -12,7 +12,6 @@
                 <th>Nom</th>
                 <th>Prénom</th>
                 <th>Sexe</th>
-                <th>Num_secu</th>
                 <th>Modifier</th>
                 <th>Détails</th>
                 <th>Ordonnance</th>
@@ -26,10 +25,9 @@
                     <TD>@Html.DisplayFor(m => Patient.Nom_p)</TD>
                     <td>@Html.DisplayFor(m => Patient.Prenom_p)</td>
                     <td>@Html.DisplayFor(m => Patient.Sexe_p)</td>
-                    <td>@Html.DisplayFor(m => Patient.Num_secu)</td>
                     <td><a asp-action="Edit" asp-route-id="@Patient.PatientId" class="btn btn-primary btn-sm">Modifier</a></td>
                     <td><a asp-action="Details" asp-route-id="@Patient.PatientId" class="btn btn-primary btn-sm">Détails</a></td>
-                    <td><a asp-action="Ordonnance" asp-route-id="@Patient.PatientId"class="btn btn-success btn-sm">Ordonnance</a></td>
+                    <td><a asp-controller="Ordonnance" asp-action="Index" asp-route-id="@Patient.PatientId" class="btn btn-info">Ordonnance</a></td>
                     <td><a asp-action="Delete" asp-route-id="@Patient.PatientId" class="btn btn-danger btn-sm">Supprimer</a></td>
                 </tr>
             }

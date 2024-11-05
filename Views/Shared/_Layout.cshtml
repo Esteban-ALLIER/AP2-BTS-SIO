@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 
 <head>
     <meta charset="utf-8">
@@ -46,13 +46,13 @@
                         <li>
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <span class="navbar-text ">Bonjour Dr.@User.Identity.Name!</span>
-                                <a asp-action="EditAccount" asp-controller="Dashboard"><br>
+                                <span class="navbar-text">Bonjour Dr.@User.Identity.Name !</span>
+                                <a asp-action="EditMedecin" asp-controller="Dashboard">
                                     <button class="btn btn-primary btn-sm ">Modifier mes
-                                        informations</button><br>
+                                        informations</button>
                                 </a>
                                 <a asp-action="Logout" asp-controller="Account">
-                                    <br><button class="btn btn-danger btn-sm ">Se déconnecter</button>
+                                    <button class="btn btn-danger btn-sm ">Se déconnecter</button>
                                 </a>
 
                                 <br>
@@ -66,8 +66,8 @@
                             }
                         </li>
                         <li>
+                            <!-- Toggle for Dark Mode -->
                             <div class="d-flex align-items-center justify-content-between mode-sombre-toggle">
-                                <!-- Toggle Dark Mode -->
                                 <input class="form-check-input" type="checkbox" id="darkModeToggle"
                                     onclick="toggleDarkMode()">
                                 <label class="form-check-label ms-3" for="darkModeToggle">Mode Sombre</label>
