@@ -1,14 +1,10 @@
 ﻿@model List<ASPBookProject.Models.Ordonnance>
 
-<h2>Ordonnances du patient</h2>
+<h2 class="text-center">Ordonnances du patient</h2>
 
-<!-- Bouton pour revenir à la liste des patients -->
-<a asp-controller="Patient" asp-action="Index" class="btn btn-secondary">Retour à la liste des patients</a>
 
-<!-- Bouton pour créer une nouvelle ordonnance -->
-<a asp-controller="Ordonnance" asp-action="Create" asp-route-patientId="@ViewBag.PatientId" class="btn btn-primary">Créer une nouvelle ordonnance</a>
 
-<h3>Liste des ordonnances</h3>
+<h3 class="text-center">Liste des ordonnances</h3>
 <table class="table">
     <thead>
         <tr>
@@ -25,12 +21,14 @@
             <tr>
                 <td>@string.Join(", ", ordonnance.Medicaments.Select(m => m.Libelle_med))</td>
                 <td>@ordonnance.Posologie</td>
-                <td>@ordonnance.Duree_traitement</td>
                 <td>@ordonnance.Instructions_specifique</td>
                 <td>
-                    <a asp-action="DownloadPdf" asp-route-id="@ordonnance.OrdonnanceId" class="btn btn-success">Télécharger PDF</a>
+                    <a asp-action="DownloadPdf" asp-route-id="@ordonnance.OrdonnanceId" class="btn btn-success">Télécharger
+                        PDF</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<a asp-controller="Patient" asp-action="Index" class="btn btn-secondary">Retour à la liste des patients</a>
+<a asp-controller="Ordonnance" asp-action="Add" asp-route-Id="@ViewBag.PatientId" class="btn btn-primary">Créer une nouvelle ordonnance</a>

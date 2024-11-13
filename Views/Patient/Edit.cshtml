@@ -8,23 +8,23 @@
     <input type="hidden" asp-for="Patient.PatientId" />
 
     <div class="form-group">
-        <label asp-for="Patient.Nom_p" class="control-label"></label>
+        <label asp-for="Patient.Nom_p" class="control-label">Nom</label>
         <input asp-for="Patient.Nom_p" class="form-control" />
         <span asp-validation-for="Patient.Nom_p" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Patient.Prenom_p" class="control-label"></label>
+        <label asp-for="Patient.Prenom_p" class="control-label">Prénom</label>
         <input asp-for="Patient.Prenom_p" class="form-control" />
         <span asp-validation-for="Patient.Prenom_p" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Patient.Sexe_p" class="control-label"></label>
+        <label asp-for="Patient.Sexe_p" class="control-label">Sexe</label>
         <select asp-for="Patient.Sexe_p" asp-items="@Html.GetEnumSelectList(typeof(TypeSexe))" class="form-control">
             <option value="">Choissisez le sexe</option>
         </select> <span asp-validation-for="Patient.Sexe_p" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Patient.Num_secu" class="control-label"></label>
+        <label asp-for="Patient.Num_secu" class="control-label">Numéro de sécurité</label>
         <input asp-for="Patient.Num_secu" class="form-control" />
         <span asp-validation-for="Patient.Num_secu" class="text-danger"></span>
     </div>
@@ -72,7 +72,7 @@
             <br>
         }
     </div>
-
+<br><br>
     <div class="form-group">
         <input type="submit" value="Enregistrer" class="btn btn-primary" />
         <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>

@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using ASPBookProject.Data;
 using ASPBookProject.Models;
 using ASPBookProject.ViewModels;
@@ -5,10 +9,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-
 // Modèle ViewModel
 public class PatientEditViewModel
 {
+    [Required]
     public Patient? Patient { get; set; }
     public List<Antecedent>? Antecedents { get; set; }
     public List<Allergie>? Allergies { get; set; }
@@ -47,9 +51,7 @@ namespace ASPBookProject.Controllers
                 .FirstOrDefaultAsync(p => p.PatientId == id);
 
             if (patient == null)
-            {
                 return NotFound();
-            }
 
             var viewModel = new PatientEditViewModel
             {
@@ -62,16 +64,21 @@ namespace ASPBookProject.Controllers
 
             return View(viewModel);
         }
-        [AllowAnonymous]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+
+
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, PatientEditViewModel viewModel)
         {
             if (id != viewModel.Patient.PatientId)
             {
                 return NotFound();
             }
-
+            if (!ModelState.IsValid)
+            {
+                viewModel.Antecedents = await _context.Antecedents.ToListAsync();
+                viewModel.Allergies = await _context.Allergies.ToListAsync();
+                return View(viewModel);
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -80,6 +87,7 @@ namespace ASPBookProject.Controllers
                         .Include(p => p.Antecedents)
                         .Include(p => p.Allergies)
                         .FirstOrDefaultAsync(p => p.PatientId == id);
+
 
                     if (patient == null)
                     {
@@ -121,8 +129,10 @@ namespace ASPBookProject.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
+                    ThrowException();
+                    Console.WriteLine(ex.Message);
                     if (!PatientExists(viewModel.Patient.PatientId))
                     {
                         return NotFound();
@@ -135,14 +145,10 @@ namespace ASPBookProject.Controllers
             }
 
             // Si nous arrivons ici, quelque chose a échoué, réafficher le formulaire
+            ThrowException();
             viewModel.Antecedents = await _context.Antecedents.ToListAsync();
             viewModel.Allergies = await _context.Allergies.ToListAsync();
             return View(viewModel);
-        }
-
-        private bool PatientExists(int id)
-        {
-            return _context.Patients.Any(e => e.PatientId == id);
         }
 
         [Authorize]
@@ -154,7 +160,7 @@ namespace ASPBookProject.Controllers
             {
                 return NotFound();
             }
-            return View(patient); 
+            return View(patient);
         }
         [AllowAnonymous]
         [HttpPost]
@@ -170,53 +176,47 @@ namespace ASPBookProject.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index"); // Après suppression, redirige vers la liste des patients
         }
-        public async Task<IActionResult> Details(int id)
+
+
+
+
+        public async Task<IActionResult> ShowDetails(int id)
         {
-            // Récupère le patient en fonction de son ID, ainsi que ses antécédents et allergies
             var patient = await _context.Patients
                 .Include(p => p.Antecedents)
                 .Include(p => p.Allergies)
                 .FirstOrDefaultAsync(p => p.PatientId == id);
 
-            // Si le patient n'est pas trouvé, retourne une erreur 404
             if (patient == null)
-            {
                 return NotFound();
-            }
 
-            // Création du modèle de vue avec les informations du patient et ses relations
             var viewModel = new PatientEditViewModel
             {
                 Patient = patient,
-                Antecedents = await _context.Antecedents.ToListAsync(),
-                Allergies = await _context.Allergies.ToListAsync(),
-                SelectedAntecedentIds = patient.Antecedents.Select(a => a.AntecedentId).ToList(),
-                SelectedAllergieIds = patient.Allergies.Select(a => a.AllergieId).ToList()
+                Antecedents = patient.Antecedents.ToList(),
+                Allergies = patient.Allergies.ToList()
+
             };
 
             return View(viewModel);
         }
-        [Authorize]
-        [HttpGet]
         public async Task<IActionResult> Add()
         {
-            var viewModel = new AddPatientViewModels
-            {
-                Nom_p = string.Empty,
-                Prenom_p = string.Empty,
-                Sexe_p = TypeSexe.Masculin,
-                Num_secu = string.Empty,
-                Antecedents = await _context.Antecedents.ToListAsync(),
-                Allergies = await _context.Allergies.ToListAsync()
-            };
 
+            var viewModel = new PatientEditViewModel
+            {
+
+                Antecedents = await _context.Antecedents.ToListAsync(),
+                Allergies = await _context.Allergies.ToListAsync(),
+                SelectedAntecedentIds = new List<int>(),
+                SelectedAllergieIds = new List<int>()
+            };
             return View(viewModel);
         }
 
-        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(AddPatientViewModels viewModel)
+        public async Task<IActionResult> Add(PatientEditViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -224,47 +224,54 @@ namespace ASPBookProject.Controllers
                 viewModel.Allergies = await _context.Allergies.ToListAsync();
                 return View(viewModel);
             }
-
-            // Crée un nouveau patient avec les informations du formulaire
-            var patient = new Patient
+            Patient patient = new Patient
             {
-                Nom_p = viewModel.Nom_p,
-                Prenom_p = viewModel.Prenom_p,
-                Sexe_p = (Sexe)viewModel.Sexe_p,
-                Num_secu = viewModel.Num_secu
+                Nom_p = viewModel.Patient.Nom_p,
+                Prenom_p = viewModel.Patient.Prenom_p,
+                Sexe_p = viewModel.Patient.Sexe_p,
+                Num_secu = viewModel.Patient.Num_secu,
+                Allergies = new List<Allergie>(),
+                Antecedents = new List<Antecedent>()
             };
 
-            // Ajout des antécédents sélectionnés
-            if (viewModel.SelectedAntecedentIds != null)
-            {
-                var selectedAntecedents = await _context.Antecedents
-                    .Where(a => viewModel.SelectedAntecedentIds.Contains(a.AntecedentId))
-                    .ToListAsync();
-
-                foreach (var antecedent in selectedAntecedents)
-                {
-                    patient.Antecedents.Add(antecedent);
-                }
-            }
-
-            // Ajout des allergies sélectionnées
             if (viewModel.SelectedAllergieIds != null)
             {
                 var selectedAllergies = await _context.Allergies
-                    .Where(al => viewModel.SelectedAllergieIds.Contains(al.AllergieId))
+                    .Where(a => viewModel.SelectedAllergieIds.Contains(a.AllergieId))
                     .ToListAsync();
-
                 foreach (var allergie in selectedAllergies)
                 {
                     patient.Allergies.Add(allergie);
                 }
             }
-
+            if (viewModel.SelectedAntecedentIds != null)
+            {
+                var selectedAntecedents = await _context.Antecedents
+                    .Where(a => viewModel.SelectedAntecedentIds.Contains(a.AntecedentId))
+                    .ToListAsync();
+                foreach (var antecedent in selectedAntecedents)
+                {
+                    patient.Antecedents.Add(antecedent);
+                }
+            }
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
+        private bool PatientExists(int id)
+        {
+            return _context.Patients.Any(e => e.PatientId == id);
+        }
+
+
+        [HttpPost]
+        public IActionResult ThrowException()
+        {
+            throw new Exception("Une exception s'est produite, nous testons la page d'exception pour les développeurs.");
+        }
+
+
 
     }
 }

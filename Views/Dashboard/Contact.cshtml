@@ -1,0 +1,44 @@
+@model MailViewModel
+
+<br>
+<h2 class="footer text-center">Contactez un message</h2>
+<br><br>
+
+<form asp-action="Contact" asp-controller="Contact" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Nom" class="control-label"></label>
+        <input asp-for="Nom" class="form-control" />
+        <span asp-validation-for="Nom" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Prenom" class="control-label"></label>
+        <input asp-for="Prenom" class="form-control" />
+        <span asp-validation-for="Prenom" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="email" class="control-label"></label>
+        <input asp-for="email" class="form-control" />
+        <span asp-validation-for="email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="telephone" class="control-label"></label>
+        <input asp-for="telephone" class="form-control" />
+        <span asp-validation-for="telephone" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="message" class="control-label"></label>
+        <div class="form-floating">
+            <textarea asp-for="message" class="form-control" id="floatingTextarea2" style="height: 100px"></textarea>
+            <label asp-for="message" class="control-label"></label>
+            <span asp-validation-for="message" class="text-danger"></span>
+        </div>
+    </div>
+
+</form>
+<br><br>
+<div class="form-group">
+    <input type="submit" value="Envoyer" class="btn btn-primary" />
+    <a asp-action="Index" asp-asp-controller="Dashboard" class="btn btn-secondary">Annuler</a>
+</div>

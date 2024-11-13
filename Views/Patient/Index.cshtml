@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Patient>
-    <br>
-<h1 class="text-center">Liste Patients</h1>
+<br>
+<h1 class="text-center">Liste Patients</h1><br><br>
+
 
 
 
@@ -12,10 +13,8 @@
                 <th>Nom</th>
                 <th>Prénom</th>
                 <th>Sexe</th>
-                <th>Modifier</th>
-                <th>Détails</th>
-                <th>Ordonnance</th>
-                <th>Supprimer</th>
+                <th>Actions</th>
+
             </tr>
         </thead>
         <tbody>
@@ -25,10 +24,11 @@
                     <TD>@Html.DisplayFor(m => Patient.Nom_p)</TD>
                     <td>@Html.DisplayFor(m => Patient.Prenom_p)</td>
                     <td>@Html.DisplayFor(m => Patient.Sexe_p)</td>
-                    <td><a asp-action="Edit" asp-route-id="@Patient.PatientId" class="btn btn-primary btn-sm">Modifier</a></td>
-                    <td><a asp-action="Details" asp-route-id="@Patient.PatientId" class="btn btn-primary btn-sm">Détails</a></td>
-                    <td><a asp-controller="Ordonnance" asp-action="Index" asp-route-id="@Patient.PatientId" class="btn btn-info">Ordonnance</a></td>
-                    <td><a asp-action="Delete" asp-route-id="@Patient.PatientId" class="btn btn-danger btn-sm">Supprimer</a></td>
+                    <td><a asp-action="Edit" asp-route-id="@Patient.PatientId" class="btn btn-warning">Modifier</a>
+                        <a asp-action="ShowDetails" asp-route-id="@Patient.PatientId" class="btn btn-info">Détails</a>
+                        <a asp-controller="Ordonnance" asp-action="Index" asp-route-id="@Patient.PatientId"class="btn btn-info">Ordonnance</a>
+                        <a asp-action="Delete" asp-route-id="@Patient.PatientId" class="btn btn-danger">Supprimer</a>
+                    </td>
                 </tr>
             }
         </tbody>

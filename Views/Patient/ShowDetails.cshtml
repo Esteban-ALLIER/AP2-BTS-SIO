@@ -6,22 +6,22 @@
 
 <form>
     <div class="form-group">
-        <label asp-for="Patient.Nom_p" class="control-label"></label>
+        <label asp-for="Patient.Nom_p" class="control-label">Nom</label>
         <input asp-for="Patient.Nom_p" class="form-control" readonly/>
     </div>
 
     <div class="form-group">
-        <label asp-for="Patient.Prenom_p" class="control-label"></label>
+        <label asp-for="Patient.Prenom_p" class="control-label">Prénom</label>
         <input asp-for="Patient.Prenom_p" class="form-control" readonly/>
     </div>
 
     <div class="form-group">
-        <label asp-for="Patient.Sexe_p" class="control-label"></label>
+        <label asp-for="Patient.Sexe_p" class="control-label">Sexe</label>
         <input asp-for="Patient.Sexe_p" class="form-control" readonly/>
     </div>
 
     <div class="form-group">
-        <label asp-for="Patient.Num_secu" class="control-label"></label>
+        <label asp-for="Patient.Num_secu" class="control-label">Numéro de sécurité</label>
         <input asp-for="Patient.Num_secu" class="form-control" readonly/>
     </div>
 
@@ -64,7 +64,7 @@
             <p class="text-muted">Ce patient n'a pas d'allergies.</p><br>
         }
     </div>
-
+<br><br>
     <div class="form-group">
         <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>
     </div>

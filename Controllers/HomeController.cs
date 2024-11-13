@@ -14,6 +14,7 @@ namespace ASPBookProject.Controllers
         {
             return $"({id})^2 = {id * id}";
         }
+        
 
     }
 }

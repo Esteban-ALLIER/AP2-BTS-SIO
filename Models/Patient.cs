@@ -8,10 +8,12 @@ public class Patient
 {
     [Key]
     public int PatientId { get; set; }
-    public required string Nom_p { get; set; }
+    [Required(ErrorMessage ="Le nom est requis")]
+    public  string Nom_p { get; set; }
+    [Required(ErrorMessage ="Le prénom est requis")]
     public required string Prenom_p { get; set; }
-    public required Sexe Sexe_p { get; set; }
-
+     [Required(ErrorMessage ="Le sexe est requis")]
+    public required string Sexe_p { get; set; }
     [RegularExpression(@"^\d{7}$", ErrorMessage = "Le numéro de sécurité dois posseder 7 chiffres")]
     public required String Num_secu { get; set; }
     public List<Antecedent> Antecedents { get; set; } = new();
