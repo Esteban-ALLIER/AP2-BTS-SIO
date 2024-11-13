@@ -16,7 +16,7 @@ namespace ASPBookProject.Controllers
         [HttpGet]
         public  IActionResult Contact()
         {
-                return RedirectToAction("Index", "Dashboard");
+                return RedirectToAction("Contact", "Dashboard");
         }
 
         [HttpPost, ActionName("Contact")]
@@ -31,7 +31,9 @@ namespace ASPBookProject.Controllers
             message.From = new MailAddress(sender);
             message.Subject ="Nouveau Message";
             message.To.Add(receiver);
-            message.Body= messageComplet;        
+            message.Body= messageComplet;
+            if(!ModelState.IsValid)
+                return View(viewModel);
 
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {
