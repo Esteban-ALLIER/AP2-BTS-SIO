@@ -26,7 +26,6 @@
                     <td>@Html.DisplayFor(m => Patient.Sexe_p)</td>
                     <td><a asp-action="Edit" asp-route-id="@Patient.PatientId" class="btn btn-warning">Modifier</a>
                         <a asp-action="ShowDetails" asp-route-id="@Patient.PatientId" class="btn btn-info">Détails</a>
-                        <a asp-controller="Ordonnance" asp-action="Index" asp-route-id="@Patient.PatientId"class="btn btn-info">Ordonnance</a>
                         <a asp-action="Delete" asp-route-id="@Patient.PatientId" class="btn btn-danger">Supprimer</a>
                     </td>
                 </tr>

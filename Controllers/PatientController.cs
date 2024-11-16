@@ -131,7 +131,6 @@ namespace ASPBookProject.Controllers
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    ThrowException();
                     Console.WriteLine(ex.Message);
                     if (!PatientExists(viewModel.Patient.PatientId))
                     {
@@ -144,8 +143,6 @@ namespace ASPBookProject.Controllers
                 }
             }
 
-            // Si nous arrivons ici, quelque chose a échoué, réafficher le formulaire
-            ThrowException();
             viewModel.Antecedents = await _context.Antecedents.ToListAsync();
             viewModel.Allergies = await _context.Allergies.ToListAsync();
             return View(viewModel);
@@ -265,11 +262,7 @@ namespace ASPBookProject.Controllers
         }
 
 
-        [HttpPost]
-        public IActionResult ThrowException()
-        {
-            throw new Exception("Une exception s'est produite, nous testons la page d'exception pour les développeurs.");
-        }
+
 
 
 

@@ -19,8 +19,10 @@
     </div>
     <div class="form-group">
         <label asp-for="Patient.Sexe_p" class="control-label">Sexe</label>
-        <select asp-for="Patient.Sexe_p" asp-items="@Html.GetEnumSelectList(typeof(TypeSexe))" class="form-control">
+        <select asp-for="Patient.Sexe_p" class="form-control">
             <option value="">Choissisez le sexe</option>
+            <option value="F" selected>F</option>
+            <option value="M" selected>M</option>
         </select> <span asp-validation-for="Patient.Sexe_p" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -72,7 +74,7 @@
             <br>
         }
     </div>
-<br><br>
+    <br><br>
     <div class="form-group">
         <input type="submit" value="Enregistrer" class="btn btn-primary" />
         <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>

@@ -43,42 +43,26 @@ fonctionalite qui me derange en moins*@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           </ul>
-          <!-- Toggle Dark Mode -->
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="darkModeToggle" onclick="toggleDarkMode()">
-            <label class="form-check-label" for="darkModeToggle"></label>
-          </div>
         </div>
       </div>
     </nav>
-    <script>
-      function toggleDarkMode() {
-        const html = document.documentElement;
-        const currentTheme = html.getAttribute("data-bs-theme");
-
-        if (currentTheme === "dark") {
-          html.setAttribute("data-bs-theme", "light");
-        } else {
-          html.setAttribute("data-bs-theme", "dark");
-        }
-      }
-    </script>
   </header>
 
   <main class="container flex-grow-1">
 
-   <br><h1 class="text-center padding">S'identifier</h1><br>
+    <br>
+    <h1 class="text-center padding">S'identifier</h1><br>
     <form asp-action="Login" asp-controller="Account" method="post">
       <div asp-validation-summary="ModelOnly" class="text-danger"></div>
       <div class="form-group row">
-        <label asp-for="UserName" class="col-sm-2 col-form-label"></label>
+        <label asp-for="UserName" class="col-sm-2 col-form-label">Nom</label>
         <div class="col-sm-10">
           <input asp-for="UserName" class="form-control" />
           <span asp-validation-for="UserName" class="text-danger"></span>
         </div>
       </div>
       <div class="form-group row">
-        <label  asp-for="Password" class="col-sm-2 col-form-label"></label>
+        <label asp-for="Password" class="col-sm-2 col-form-label">mot de passe</label>
         <div class="col-sm-10">
           <input asp-for="Password" class="form-control" />
           <span asp-validation-for="Password" class="text-danger"></span>
@@ -89,7 +73,7 @@ fonctionalite qui me derange en moins*@
       <input type="submit" value="Se connecter" class="btn btn-primary" />
     </form>
   </main>
-  <footer>
+  <footer class="bg-body-tertiary">
     <div class="footer text-center">
       <p>&copy; 2024 Galaxy Swiss Bourdin (GSB). Tous droits réservés.</p>
     </div>

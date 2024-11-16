@@ -26,13 +26,41 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function toggleDarkMode() {
-    const html = document.documentElement;
-    const currentTheme = html.getAttribute("data-bs-theme");
+const body = document.body;
+const navbar = document.querySelector('.navbar');
+const footer = document.querySelector('footer');
+const darkModeToggle = document.getElementById('darkModeToggle');
 
-    if (currentTheme === "dark") {
-        html.setAttribute("data-bs-theme", "light");
-    } else {
-        html.setAttribute("data-bs-theme", "dark");
-    }
+if (localStorage.getItem('dark-mode') === 'enabled') {
+    enableDarkMode();
+    darkModeToggle.checked = true;
 }
+
+function enableDarkMode() {
+    body.classList.add('dark-mode');
+    navbar.classList.add('dark-mode');
+    footer.classList.add('dark-mode');
+    body.classList.remove('light-mode');
+    navbar.classList.remove('light-mode');
+    footer.classList.remove('light-mode');
+    localStorage.setItem('dark-mode', 'enabled');
+}
+
+function disableDarkMode() {
+    body.classList.add('light-mode');
+    navbar.classList.add('light-mode');
+    footer.classList.add('light-mode');
+    body.classList.remove('dark-mode');
+    navbar.classList.remove('dark-mode');
+    footer.classList.remove('dark-mode');
+    localStorage.setItem('dark-mode', 'disabled');
+}
+
+darkModeToggle.addEventListener('change', function () {
+    if (this.checked) {
+        enableDarkMode();
+    } else {
+        disableDarkMode();
+    }
+});
+

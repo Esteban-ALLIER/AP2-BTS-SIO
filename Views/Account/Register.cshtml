@@ -44,75 +44,60 @@ fonctionalite qui me derange en moins*@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     </ul>
-                    <!-- Toggle Dark Mode -->
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="darkModeToggle" onclick="toggleDarkMode()">
-                        <label class="form-check-label" for="darkModeToggle"></label>
-                    </div>
                 </div>
             </div>
         </nav>
-        <script>
-            function toggleDarkMode() {
-                const html = document.documentElement;
-                const currentTheme = html.getAttribute("data-bs-theme");
-
-                if (currentTheme === "dark") {
-                    html.setAttribute("data-bs-theme", "light");
-                } else {
-                    html.setAttribute("data-bs-theme", "dark");
-                }
-            }
-        </script>
     </header>
 
     <main class="container flex-grow-1">
-
-        <h1>Créer un compte</h1>
+        <br><br>
+        <h1 class="text-center">Créer un compte</h1>
+        <br><br>
         <form asp-action="Register" asp-controller="Account" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group row">
-                <label asp-for="UserName" class="col-sm-2 col-form-label"></label>
+                <label asp-for="UserName" class="col-sm-2 col-form-label">Nom</label>
                 <div class="col-sm-10">
                     <input asp-for="UserName" class="form-control" />
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Login_m" class="col-sm-2 col-form-label"></label>
+                <label asp-for="Login_m" class="col-sm-2 col-form-label">Prénom</label>
                 <div class="col-sm-10">
                     <input asp-for="Login_m" class="form-control" />
                     <span asp-validation-for="Login_m" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Role" class="col-sm-2 col-form-label"></label>
+                <label asp-for="Role" class="col-sm-2 col-form-label">Role</label>
                 <div class="col-sm-10">
                     <input asp-for="Role" class="form-control" />
                     <span asp-validation-for="Role" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Date" class="col-sm-2 col-form-label"></label>
+                <label asp-for="Date" class="col-sm-2 col-form-label">Date de naissance</label>
                 <div class="col-sm-10">
                     <input asp-for="Date" class="form-control" />
                     <span asp-validation-for="Date" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Password" class="col-sm-2 col-form-label"></label>
+                <label asp-for="Password" class="col-sm-2 col-form-label">mot de passe </label>
                 <div class="col-sm-10">
                     <input asp-for="Password" class="form-control" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
             </div>
             <br />
+            <br>
             <input type="submit" value="Register" class="btn btn-primary" />
             <a asp-action="Login" class="btn btn-secondary">Annuler</a>
 
         </form>
     </main>
-    <footer>
+    <footer class="bg-body-tertiary">
         <div class="footer text-center">
             <p>&copy; 2024 Galaxy Swiss Bourdin (GSB). Tous droits réservés.</p>
         </div>
