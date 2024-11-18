@@ -9,6 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
+using iText.IO.Image;
+
+
 
 namespace ASPBookProject.Controllers
 {
@@ -40,7 +47,7 @@ namespace ASPBookProject.Controllers
 
             return View(ordonnances);
         }
-
+        [Authorize]
         public async Task<IActionResult> ShowDetails(int id)
         {
             var ordonnance = await _context.Ordonnances
@@ -66,7 +73,7 @@ namespace ASPBookProject.Controllers
         }
 
 
-
+        [Authorize]
         public async Task<IActionResult> Add()
         {
             var MedecinID = _userManager.GetUserId(User);
@@ -87,6 +94,7 @@ namespace ASPBookProject.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(OrdonnanceEditViewModel viewModel)
         {
@@ -162,7 +170,7 @@ namespace ASPBookProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             var ordonnance = await _context.Ordonnances
@@ -192,6 +200,7 @@ namespace ASPBookProject.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, OrdonnanceEditViewModel viewModel)
         {
             if (id != viewModel.OrdonnanceId)
@@ -305,10 +314,12 @@ namespace ASPBookProject.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public IActionResult ThrowException()
         {
             throw new Exception("Une exception s'est produite, nous testons la page d'exception pour les développeurs.");
         }
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -417,5 +428,76 @@ namespace ASPBookProject.Controllers
             return antecedents;
         }
 
+        public async Task<IActionResult> ExportPdf(int id)
+        {
+            var ordonnance = await _context.Ordonnances
+                .Include(o => o.Patient)
+                .Include(o => o.Medecin)
+                .Include(o => o.Medicaments)
+                .FirstOrDefaultAsync(o => o.OrdonnanceId == id);
+
+            if (ordonnance == null)
+                return NotFound();
+
+            // Créer un MemoryStream pour générer le PDF
+            using (var stream = new MemoryStream())
+            {
+                var writer = new PdfWriter(stream);
+                var pdf = new PdfDocument(writer);
+                var document = new Document(pdf);
+
+                // Titre
+                document.Add(new Paragraph("Ordonnance Médicale")
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetFontSize(20)
+                    .SetBold());
+                    
+                // Informations du médecin
+                document.Add(new Paragraph($"Médecin : Dr. {ordonnance.Medecin.UserName}")
+                    .SetTextAlignment(TextAlignment.LEFT));
+
+                document.Add(new Paragraph($"Date : {DateTime.Now:dd/MM/yyyy}")
+                    .SetTextAlignment(TextAlignment.RIGHT)
+                    .SetFontSize(12));
+
+                // Informations du patient
+                document.Add(new Paragraph($"Patient : {ordonnance.Patient.Nom_p} {ordonnance.Patient.Prenom_p}")
+                    .SetTextAlignment(TextAlignment.LEFT));
+                document.Add(new Paragraph($"Numéro de Sécurité Sociale : {ordonnance.Patient.Num_secu}")
+                    .SetTextAlignment(TextAlignment.LEFT));
+
+                // Liste des médicaments
+                document.Add(new Paragraph("Médicaments :").SetBold());
+                foreach (var medicament in ordonnance.Medicaments)
+                {
+                    document.Add(new Paragraph($"- {medicament.Libelle_med}")
+                        .SetTextAlignment(TextAlignment.LEFT));
+                }
+
+                // Instructions spécifiques
+                if (!string.IsNullOrEmpty(ordonnance.Instructions_specifique))
+                {
+                    document.Add(new Paragraph("Instructions spécifiques :")
+                        .SetBold());
+                    document.Add(new Paragraph(ordonnance.Instructions_specifique)
+                        .SetTextAlignment(TextAlignment.LEFT));
+                }
+
+                // Posologie
+                document.Add(new Paragraph("Posologie :")
+                    .SetBold());
+                document.Add(new Paragraph(ordonnance.Posologie)
+                    .SetTextAlignment(TextAlignment.LEFT));
+
+                // Fin du document
+                document.Close();
+
+                // Retourne le fichier PDF au client
+                var fileName = $"Ordonnance_{ordonnance.Patient.Nom_p}_{ordonnance.Patient.Prenom_p}.pdf";
+                return File(stream.ToArray(), "application/pdf", fileName);
+            }
+        }
+
     }
 }
+

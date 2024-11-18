@@ -67,12 +67,12 @@ app.UseStaticFiles(); // give access to files in wwwroot
 // à ne pas stocker des données sensibles dans le dossier wwwroot
 
 // Pour l'accès aux fichiers statiques vous pouvez utiliser un chemin
-// relatif au web root, par exemple l'acces au fichier wwwroot/images/image01.jpg,
+// relatif au web root, par exemple l'acces au fichier wwwroot/images/image01.jpg,  
 // on utilisera le chemin http://localhost:5245/images/image01.jpg
 
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Default Routing system
@@ -84,4 +84,3 @@ app.MapControllerRoute(
 );
 
 app.Run();
-

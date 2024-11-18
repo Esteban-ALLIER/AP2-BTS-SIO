@@ -19,12 +19,13 @@ namespace ASPBookProject.Controllers
         }
 
         // Affiche la liste des médicaments
+        [Authorize]
         public IActionResult Index()
         {
             var medicaments = _context.Medicaments.Include(m => m.Allergies).Include(m => m.Antecedents).ToList();
             return View(medicaments);
         }
-
+        [Authorize]
         public async Task<IActionResult> ShowDetails(int id)
         {
             var medicament = await _context.Medicaments
@@ -47,8 +48,8 @@ namespace ASPBookProject.Controllers
         }
 
         // Affiche le formulaire de création d'un médicament
-    
 
+        [Authorize]
         public async Task<IActionResult> Add()
         {
             var viewModel = new MedicamentEditViewModel
@@ -62,6 +63,7 @@ namespace ASPBookProject.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(MedicamentEditViewModel viewModel)
         {
@@ -104,7 +106,7 @@ namespace ASPBookProject.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
+        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             var medicament = await _context.Medicaments
@@ -129,6 +131,7 @@ namespace ASPBookProject.Controllers
 
 
         [HttpPost, ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, MedicamentEditViewModel viewModel)
         {
             if (id != viewModel.Medicament.MedicamentId)
@@ -216,6 +219,7 @@ namespace ASPBookProject.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult ThrowException()
         {
             throw new Exception("Une exception s'est produite, nous testons la page d'exception pour les développeurs.");

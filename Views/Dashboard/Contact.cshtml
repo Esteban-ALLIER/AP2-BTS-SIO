@@ -1,10 +1,10 @@
 @model MailViewModel
 
 <br>
-<h2 class="footer text-center">Contactez un message</h2>
+<h2 class="footer text-center">Contactez le support</h2>
 <br><br>
 
-<form asp-action="Contact" asp-controller="Contact" method="post">
+<form asp-action="Contact" asp-controller="Dashboard" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="form-group">
@@ -35,10 +35,9 @@
             <span asp-validation-for="message" class="text-danger"></span>
         </div>
     </div>
-
+    <div class="form-group">
+        <input type="submit" value="Envoyer" class="btn btn-primary" />
+        <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary">Annuler</a>
+    </div>
 </form>
 <br><br>
-<div class="form-group">
-    <input type="submit" value="Envoyer" class="btn btn-primary" />
-    <a asp-action="Index" asp-asp-controller="Dashboard" class="btn btn-secondary">Annuler</a>
-</div>

@@ -16,20 +16,7 @@
         <span asp-validation-for="Medicament.Contr_indication" class="text-danger"></span>
     </div>
 <br><br>
-    <h4 class="text-center">Antécédents</h4>
-    <div class="form-group">
-        @foreach (var antecedent in Model.Antecedents )
-        {
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="SelectedAntecedentIds" value="@antecedent.AntecedentId"
-                @(Model.SelectedAntecedentIds != null && Model.SelectedAntecedentIds.Contains(antecedent.AntecedentId) ?
-                    "checked" : "") />
-                <label class="form-check-label">@antecedent.Libelle_a</label>
-            </div>
-        }
-    </div>
-<br><br>
-    <h4 class="text-center">Allergies</h4>
+    <h4 class="text-center">Incomptabilité Allergies</h4>
     <div class="form-group">
         @foreach (var allergie in Model.Allergies)
         {
@@ -38,6 +25,19 @@
                 @(Model.SelectedAllergieIds != null && Model.SelectedAllergieIds.Contains(allergie.AllergieId) ? "checked" :
                     "") />
                 <label class="form-check-label">@allergie.Libelle_al</label>
+            </div>
+        }
+    </div>
+<br><br>
+    <h4 class="text-center">Incomptabilité Antécédents</h4>
+    <div class="form-group">
+        @foreach (var antecedent in Model.Antecedents )
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="SelectedAntecedentIds" value="@antecedent.AntecedentId"
+                @(Model.SelectedAntecedentIds != null && Model.SelectedAntecedentIds.Contains(antecedent.AntecedentId) ?
+                    "checked" : "") />
+                <label class="form-check-label">@antecedent.Libelle_a</label>
             </div>
         }
     </div>

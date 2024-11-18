@@ -14,22 +14,35 @@
 </div>
 <br><br>
 
-<h4 class="text-center">Allergies</h3>
+<h4 class="text-center">Incomptabilité Allergies</h3>
     <div class="form-group">
         <ul>
-            @foreach (var allergie in Model.Allergies)
+            @if (Model.Allergies != null && Model.Allergies.Any())
             {
-                <li>@allergie.Libelle_al</li>
+                @foreach (var allergie in Model.Allergies)
+                {
+                    <li>@allergie.Libelle_al</li>
+                }
+            }
+            else
+            {
+                <p class="text-muted">Ce medicament n'a pas d'allergie.</p>
             }
         </ul>
     </div>
     <br><br>
-    <h4 class="text-center">Antecedents</h3>
+    <h4 class="text-center">Incomptabilité Antecedents</h3>
         <div class="form-group">
-            <ul>
-                @foreach (var antecedent in Model.Antecedents)
+            <ul> @if (Model.Antecedents != null && Model.Antecedents.Any())
                 {
-                    <li>@antecedent.Libelle_a</li>
+                    @foreach (var antecedent in Model.Antecedents)
+                    {
+                        <li>@antecedent.Libelle_a</li>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">Ce medicament n'a pas d'antécédents.</p>
                 }
             </ul>
         </div>

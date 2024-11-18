@@ -34,6 +34,7 @@ namespace ASPBookProject.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [Authorize]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var allergie = await _context.Allergies.FirstOrDefaultAsync(a => a.AllergieId == id);
@@ -58,6 +59,7 @@ namespace ASPBookProject.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(Allergie allergie)
         {
             if (!ModelState.IsValid)
@@ -75,12 +77,14 @@ namespace ASPBookProject.Controllers
             return NotFound();
 
         }
+        [Authorize]
         public IActionResult Add()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Add(Allergie allergie)
         {
             if (!ModelState.IsValid)

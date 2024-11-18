@@ -29,8 +29,7 @@
                         <td>@Html.DisplayFor(o => ordonnance.Patient.Nom_p)</td>
                         <td><a asp-action="Edit" asp-route-id="@ordonnance.OrdonnanceId" class="btn btn-warning">Modifier</a>
                             <a asp-action="ShowDetails" asp-route-id="@ordonnance.OrdonnanceId" class="btn btn-info">Détails</a>
-                            <a asp-action="Export" asp-route-id="@ordonnance.OrdonnanceId" class="btn btn-success">Exporter en
-                                PDF</a>
+                            <a asp-action="ExportPdf" asp-route-id="@ordonnance.OrdonnanceId"class="btn btn-success">Télécharger en PDF</a>
                             <a asp-action="Delete" asp-route-id="@ordonnance.OrdonnanceId" class="btn btn-danger">Supprimer</a>
                         </td>
                     </tr>
