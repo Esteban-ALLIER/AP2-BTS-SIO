@@ -14,6 +14,9 @@ using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
 using iText.IO.Image;
+using iText.Layout.Borders;
+using iText.Kernel.Colors;
+using Table = iText.Layout.Element.Table;
 
 
 
@@ -320,28 +323,27 @@ namespace ASPBookProject.Controllers
             throw new Exception("Une exception s'est produite, nous testons la page d'exception pour les développeurs.");
         }
         [Authorize]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                Ordonnance? ordonnance = await _context.Ordonnances.FindAsync(id);
+                var ordonnance = await _context.Ordonnances
+                    .Include(o => o.Medicaments)  // Important d'inclure les médicaments
+                    .FirstOrDefaultAsync(o => o.OrdonnanceId == id);
+
                 if (ordonnance != null)
                 {
-                    List<int> currentMedicamentIds = ordonnance.Medicaments.Select(m => m.MedicamentId).ToList();
-                    var selectedMedicament = await _context.Medicaments
-                            .Where(a => currentMedicamentIds.Contains(a.MedicamentId))
-                            .Include(m => m.Allergies)
-                            .Include(m => m.Antecedents)
-                            .ToListAsync();
-
-                    foreach (var medicament in selectedMedicament)
+                    // Décrémenter le compteur pour chaque médicament
+                    foreach (var medicament in ordonnance.Medicaments)
                     {
-                        if (!currentMedicamentIds.Contains(medicament.MedicamentId))
-                            medicament.compteur -= 1;
+                        medicament.compteur -= 1;
+                        _context.Update(medicament);
                     }
+
                     _context.Ordonnances.Remove(ordonnance);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("Index", "Ordonnance");
+                    return RedirectToAction("Index");
                 }
                 return NotFound();
             }
@@ -439,61 +441,96 @@ namespace ASPBookProject.Controllers
             if (ordonnance == null)
                 return NotFound();
 
-            // Créer un MemoryStream pour générer le PDF
             using (var stream = new MemoryStream())
             {
                 var writer = new PdfWriter(stream);
                 var pdf = new PdfDocument(writer);
                 var document = new Document(pdf);
 
-                // Titre
-                document.Add(new Paragraph("Ordonnance Médicale")
+                // Définir les marges du document
+                document.SetMargins(50, 50, 50, 50);
+
+                // En-tête
+                var header = new Paragraph()
+                    .Add(new Text("MED MANAGER").SetFontSize(24).SetBold())
                     .SetTextAlignment(TextAlignment.CENTER)
-                    .SetFontSize(20)
-                    .SetBold());
-                    
-                // Informations du médecin
-                document.Add(new Paragraph($"Médecin : Dr. {ordonnance.Medecin.UserName}")
-                    .SetTextAlignment(TextAlignment.LEFT));
+                    .SetMarginBottom(20);
+                document.Add(header);
 
-                document.Add(new Paragraph($"Date : {DateTime.Now:dd/MM/yyyy}")
+                // Ligne horizontale de séparation
+                document.Add(new Paragraph(new string('_', 50))
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetMarginBottom(20));
+
+                // Informations du médecin dans un bloc
+                var medecinInfo = new Div()
+                    .Add(new Paragraph("MÉDECIN TRAITANT").SetBold().SetFontSize(14))
+                    .Add(new Paragraph($"Dr. {ordonnance.Medecin.UserName}").SetFontSize(12))
+                    .SetMarginBottom(20)
+                    .SetPadding(10)
+                    .SetBackgroundColor(ColorConstants.LIGHT_GRAY);
+                document.Add(medecinInfo);
+
+                // Date de l'ordonnance
+                var dateOrdonnance = new Paragraph($"Date : {DateTime.Now:dd/MM/yyyy}")
                     .SetTextAlignment(TextAlignment.RIGHT)
-                    .SetFontSize(12));
+                    .SetMarginBottom(20);
+                document.Add(dateOrdonnance);
 
-                // Informations du patient
-                document.Add(new Paragraph($"Patient : {ordonnance.Patient.Nom_p} {ordonnance.Patient.Prenom_p}")
-                    .SetTextAlignment(TextAlignment.LEFT));
-                document.Add(new Paragraph($"Numéro de Sécurité Sociale : {ordonnance.Patient.Num_secu}")
-                    .SetTextAlignment(TextAlignment.LEFT));
+                // Informations du patient dans un bloc
+                var patientInfo = new Div()
+                    .Add(new Paragraph("PATIENT").SetBold().SetFontSize(14))
+                    .Add(new Paragraph($"Nom et prénom : {ordonnance.Patient.Nom_p} {ordonnance.Patient.Prenom_p}"))
+                    .Add(new Paragraph($"N° Sécurité Sociale : {ordonnance.Patient.Num_secu}"))
+                    .SetMarginBottom(20)
+                    .SetPadding(10)
+                    .SetBorder(new SolidBorder(1));
+                document.Add(patientInfo);
 
-                // Liste des médicaments
-                document.Add(new Paragraph("Médicaments :").SetBold());
+                // Période de validité
+                document.Add(new Paragraph()
+                    .Add(new Text("Période de validité : ").SetBold())
+                    .Add(new Text($"Du {ordonnance.Date_debut:dd/MM/yyyy} au {ordonnance.Date_fin:dd/MM/yyyy}"))
+                    .SetMarginBottom(20));
+
+                // Liste des médicaments dans un tableau
+                Table table = new Table(3);
+                table.SetWidth(UnitValue.CreatePercentValue(100));
+                // En-tête du tableau
+                Cell cell1 = new Cell().Add(new Paragraph("Médicament").SetBold());
+                Cell cell2 = new Cell().Add(new Paragraph("Posologie").SetBold());
+                Cell cell3 = new Cell().Add(new Paragraph("Instructions").SetBold());
+                table.AddCell(cell1);
+                table.AddCell(cell2);
+                table.AddCell(cell3);
+
+                // Contenu du tableau
                 foreach (var medicament in ordonnance.Medicaments)
                 {
-                    document.Add(new Paragraph($"- {medicament.Libelle_med}")
-                        .SetTextAlignment(TextAlignment.LEFT));
+                    table.AddCell(new Cell().Add(new Paragraph(medicament.Libelle_med)));
+                    table.AddCell(new Cell().Add(new Paragraph(ordonnance.Posologie)));
+                    table.AddCell(new Cell().Add(new Paragraph(ordonnance.Instructions_specifique ?? "-")));
                 }
+                document.Add(table);
 
-                // Instructions spécifiques
+                // Notes supplémentaires si nécessaire
                 if (!string.IsNullOrEmpty(ordonnance.Instructions_specifique))
                 {
-                    document.Add(new Paragraph("Instructions spécifiques :")
-                        .SetBold());
+                    document.Add(new Paragraph("\nNotes supplémentaires :").SetBold().SetMarginTop(20));
                     document.Add(new Paragraph(ordonnance.Instructions_specifique)
-                        .SetTextAlignment(TextAlignment.LEFT));
+                        .SetPadding(10)
+                        .SetBackgroundColor(ColorConstants.LIGHT_GRAY));
                 }
 
-                // Posologie
-                document.Add(new Paragraph("Posologie :")
-                    .SetBold());
-                document.Add(new Paragraph(ordonnance.Posologie)
-                    .SetTextAlignment(TextAlignment.LEFT));
+                // Pied de page avec signature
+                document.Add(new Paragraph("\n\nSignature du médecin :").SetTextAlignment(TextAlignment.RIGHT));
+                document.Add(new Paragraph("_______________________")
+                    .SetTextAlignment(TextAlignment.RIGHT)
+                    .SetMarginTop(40));
 
-                // Fin du document
                 document.Close();
 
-                // Retourne le fichier PDF au client
-                var fileName = $"Ordonnance_{ordonnance.Patient.Nom_p}_{ordonnance.Patient.Prenom_p}.pdf";
+                var fileName = $"Ordonnance_{ordonnance.Patient.Nom_p}_{ordonnance.Patient.Prenom_p}_{DateTime.Now:yyyyMMdd}.pdf";
                 return File(stream.ToArray(), "application/pdf", fileName);
             }
         }

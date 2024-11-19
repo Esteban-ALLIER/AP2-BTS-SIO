@@ -34,7 +34,7 @@
             <option value="" >Sélectionné le patient</option>
             @foreach (var pat in Model.Patients)
             {
-                <option value="@pat.PatientId">@pat.Nom_p</option>
+                <option value="@pat.PatientId">@pat.Nom_p @pat.Prenom_p</option>
             }
         </select>
         <span asp-validation-for="PatientId" class="text-danger"></span>

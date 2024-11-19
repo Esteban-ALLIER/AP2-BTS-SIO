@@ -8,12 +8,12 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Posologie</th>
+                    <th>Médecin</th>
                     <th>Date début</th>
                     <th>Date fin</th>
-                    <th>Instructions spécifiques</th>
-                    <th>Médecin</th>
-                    <th>Patient</th>
+                    <th>Posologie</th>
+                    <th>Patient Nom</th>
+                    <th>Patient prénom</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -21,15 +21,16 @@
                 @foreach (var ordonnance in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(o => ordonnance.Posologie)</td>
+                        <td>Dr @Html.DisplayFor(o => ordonnance.Medecin.UserName)</td>
                         <td>@Html.DisplayFor(o => ordonnance.Date_debut)</td>
                         <td>@Html.DisplayFor(o => ordonnance.Date_fin)</td>
-                        <td>@Html.DisplayFor(o => ordonnance.Instructions_specifique)</td>
-                        <td>Dr @Html.DisplayFor(o => ordonnance.Medecin.UserName)</td>
+                        <td>@Html.DisplayFor(o => ordonnance.Posologie)</td>
                         <td>@Html.DisplayFor(o => ordonnance.Patient.Nom_p)</td>
+                        <td>@Html.DisplayFor(o => ordonnance.Patient.Prenom_p)</td>
                         <td><a asp-action="Edit" asp-route-id="@ordonnance.OrdonnanceId" class="btn btn-warning">Modifier</a>
                             <a asp-action="ShowDetails" asp-route-id="@ordonnance.OrdonnanceId" class="btn btn-info">Détails</a>
-                            <a asp-action="ExportPdf" asp-route-id="@ordonnance.OrdonnanceId"class="btn btn-success">Télécharger en PDF</a>
+                            <a asp-action="ExportPdf" asp-route-id="@ordonnance.OrdonnanceId"
+                                class="btn btn-success">Télécharger en PDF</a>
                             <a asp-action="Delete" asp-route-id="@ordonnance.OrdonnanceId" class="btn btn-danger">Supprimer</a>
                         </td>
                     </tr>

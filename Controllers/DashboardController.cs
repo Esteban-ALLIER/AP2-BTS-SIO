@@ -30,6 +30,13 @@ namespace ASPBookProject.Controllers
         }
         [HttpGet]
         [Authorize]
+        public IActionResult FAQ()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize]
         public IActionResult Contact()
         {
             return View();
