@@ -19,10 +19,10 @@ namespace ASPBookProject.Models
 
         public List<Antecedent> Antecedents { get; set; } = new();
         public List<Allergie> Allergies { get; set; } = new();
-        public List<Medicament> Medicaments { get; set; } = new();  // Liste des médicaments
+        public List<Medicament> Medicaments { get; set; } = new();  
 
         public List<int>? SelectedAntecedentIds { get; set; }
         public List<int>? SelectedAllergieIds { get; set; }
-        public List<int>? SelectedMedicamentIds { get; set; }  // Liste des médicaments sélectionnés
+        public List<int>? SelectedMedicamentIds { get; set; }  
     }
 }

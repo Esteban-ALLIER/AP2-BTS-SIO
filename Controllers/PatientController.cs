@@ -260,11 +260,5 @@ namespace ASPBookProject.Controllers
         {
             return _context.Patients.Any(e => e.PatientId == id);
         }
-
-
-
-
-
-
     }
 }

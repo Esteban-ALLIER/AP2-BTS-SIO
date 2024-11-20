@@ -59,7 +59,6 @@ namespace ASPBookProject.Data
                 .WithMany(m => m.Ordonnances)
                 .HasForeignKey(o => o.MedecinId);
 
-            // Logique pour gérer les conflits entre les médicaments, allergies et antécédents
             modelBuilder.Entity<Medicament>()
                 .HasMany(m => m.Allergies)
                 .WithMany(a => a.Medicaments)
